@@ -7,4 +7,4 @@ edition = "2021"
 
 [dependencies]
 extendr-api = "0.4.0"
-geo-types = "0.7.8"
+geo-types = "0.7.9"
