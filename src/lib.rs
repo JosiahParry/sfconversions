@@ -9,6 +9,7 @@ use crate::geom::*;
 pub fn sfg_to_geometry(x: Robj) -> Geom {
     let cls = x.class().unwrap().next().unwrap();
 
+    rprintln!("{}", cls);
     match cls {
         "POINT" => {
             let x = Doubles::try_from(x).unwrap();
