@@ -7,13 +7,10 @@ pub mod geom;
 use crate::geom::*;
 
 pub fn sfg_to_geometry(x: Robj) -> Geom {
-    let cls = x.class().unwrap().next().unwrap();
-    let cls2 = x.class().unwrap().map(|x| x).collect::<Vec<&str>>();
 
-    rprintln!("{}", cls);
-    rprintln!("{:?}", cls2);
+    let cls2 = x.class().unwrap().map(|x| x).collect::<Vec<&str>>();
     let cls = cls2[1];
-    
+
     match cls {
         "POINT" => {
             let x = Doubles::try_from(x).unwrap();
