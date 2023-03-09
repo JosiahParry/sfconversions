@@ -6,6 +6,9 @@ use geo_types::*;
 pub mod geom;
 use crate::geom::*;
 
+pub mod tosf;
+
+
 pub fn sfg_to_geometry(x: Robj) -> Geom {
 
     let cls2 = x.class().unwrap().map(|x| x).collect::<Vec<&str>>();
