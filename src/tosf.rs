@@ -3,6 +3,13 @@ use geo_types::*;
 use crate::geom::Geom;
 
 // converts any Geom to corresponding sfg object
+/// Convert a `Geom` struct to the corresponding `sfg` object.
+/// 
+/// ```
+/// let p = geo_types::Point::new(1.23, 4.56);
+/// let g = Geom::from(p)
+/// let robj = Robj::from(g)
+/// ```
 impl From<Geom> for Robj {
     fn from(x: Geom) -> Robj {
         let x = x.geom;
@@ -18,7 +25,8 @@ impl From<Geom> for Robj {
     }
 }
 
-fn from_coord(x: Coord) -> [f64; 2] {
+/// Convert a `Coord` to length 2 array.
+pub fn from_coord(x: Coord) -> [f64; 2] {
     [x.x, x.y]
 }
 

@@ -7,8 +7,12 @@ use geo_types::{
 
 use std::fmt;
 
+/// The `Geom` struct is the backbone of sfconversions. It provides
+/// an itermediary between extendr and geo / geo_types as required
+/// by the orphan rule.
 #[derive(Debug, Clone)]
 pub struct Geom {
+    /// a single field containing a geo_types [Geometry](https://docs.rs/geo-types/latest/geo_types/geometry/enum.Geometry.html) enum
     pub geom: Geometry,
 }
 
@@ -19,6 +23,7 @@ impl fmt::Display for Geom {
 }
 
 // FROM geo-types to Geom
+/// Convert a Geometry enum to a Geom struct
 impl From<Geometry> for Geom {
     fn from(geo: Geometry) -> Self {
         Geom { geom: geo }
@@ -87,7 +92,8 @@ impl From<ExternalPtr<Geom>> for Geom {
         Geom { geom: geo }
     }
 }
-
+/// When converting from an Robj, we assume it is a _pointer_ to a 
+/// Geom struct
 impl From<Robj> for Geom {
     fn from(robj: Robj) -> Self {
         let robj: ExternalPtr<Geom> = robj.try_into().unwrap();
@@ -121,7 +127,9 @@ impl From<Geom> for Point {
     }
 }
 
-// utility function to extract a Vec of Geoms from a list
+/// utility function to extract a Vec of Geoms from a list
+/// Assume you have an `sfc` object, this function will take the `sfc`
+/// object (a `List`) and return a `Vec<Geom>`.
 pub fn from_list(x: List) -> Vec<Geom> {
     x.into_iter()
         .map(|(_, robj)| Geom::try_from(robj).unwrap())
@@ -129,6 +137,8 @@ pub fn from_list(x: List) -> Vec<Geom> {
 }
 
 // helpers to cast to the proper external pointer
+/// Helper function to create pointers to `Geom` structs with classes
+/// used by [`rsgeo`](https://rsgeo.josiahparry.com/)
 pub fn to_pntr(x: Geom) -> Robj {
     let cls = match x.geom {
         Geometry::Point(ref _geom) => "point",

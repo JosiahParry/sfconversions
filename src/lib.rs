@@ -1,14 +1,57 @@
+//! Conversion between {sf} R objects and geo_types 
+//! 
+//! Provides simple conversions between sfg, sfc objects from sf, and 
+//! geometry primitives from geo_types that can be used with other 
+//! georust libraries powered by [extendr](https://extendr.github.io/extendr/extendr_api/).
+//! 
+//! Due to the [orphan rule](https://github.com/Ixrec/rust-orphan-rules) conversion
+//! directly from extendr `Lists` to geo_types is not possible. For that reason
+//! a simple struct `Geom` is implemented with a single field `geom` which contains
+//! a geo_types `Geometry` enum. 
+//! 
+//! ## Example
+//! 
+//! ```
+//! use sfconversions::{sfg_to_geometry, geom::Geom};
+//! 
+//! #[extendr]
+//! fn sfg_to_geo(x: Robj) -> Geom {
+//!   // takes a single `Robj` and converts it to `Geom`.
+//!   // if the appropriate Robj class isn't found
+//!   // a single point with coords (0, 0) is returned
+//!   let geo = sfg_to_geometry(x);
+//!   // extract the Geometry
+//!   geo.geom
+//! }
+//! ```
+
 use extendr_api::prelude::*;
 use extendr_api::List;
 use extendr_api::RMatrix;
 use geo_types::*;
-
 pub mod geom;
 use crate::geom::*;
-
 pub mod tosf;
 
 
+/// Infalliably takes an extendr `Robj` and returns a `Geom` struct.
+/// Supports conversion from `"POINT"`, `"MULTIPOINT"`, `"LINESTRING"`, `"MULTILINESTRING"`,
+/// `"POLYGON"`, and `"MULTIPOLYGON"` to their corresponding geo_type primitive. 
+// `GEOMETRYCOLLECTION` are not supported.
+/// 
+/// ```
+/// use extendr_api::prelude::*;
+/// use extendr_api::Doubles;
+/// use sfconversions::sfg_to_geometry;
+/// // Create an extendr doubles object and set the appropriate class
+/// let dbls = Doubles::from_values([0.0, 10.0])
+///     .into_robj()
+///     .set_class(["XY", "POINT", "sfg"])
+///     .unwrap();
+/// 
+/// // convert using `sfg_to_geometry()` and extract the underlyig
+/// let geo_primitive = sfg_to_geometry(dbls).geom;
+/// ```
 pub fn sfg_to_geometry(x: Robj) -> Geom {
 
     let cls2 = x.class().unwrap().map(|x| x).collect::<Vec<&str>>();
@@ -78,6 +121,7 @@ pub fn sfg_to_geometry(x: Robj) -> Geom {
 }
 
 // First, I need to take a matrix and convert into coordinates
+/// Convert an `RMatrix<f64>` into a vector of `Coords`.
 pub fn matrix_to_coords(x: RMatrix<f64>) -> Vec<Coord> {
     let nrow = x.nrows();
     let ncol = x.ncols();
@@ -96,6 +140,9 @@ pub fn matrix_to_coords(x: RMatrix<f64>) -> Vec<Coord> {
     coords
 }
 
+
+/// Convert an `RMatrix<f64>` into a vector of `Points`. Is
+/// used internally to create `MultiPoint`s.
 pub fn matrix_to_points(x: RMatrix<f64>) -> Vec<Point> {
     let nrow = x.nrows();
     let ncol = x.ncols();
