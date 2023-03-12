@@ -7,8 +7,8 @@ use crate::geom::Geom;
 /// 
 /// ```
 /// let p = geo_types::Point::new(1.23, 4.56);
-/// let g = Geom::from(p)
-/// let robj = Robj::from(g)
+/// let g = Geom::from(p);
+/// let robj = Robj::from(g);
 /// ```
 impl From<Geom> for Robj {
     fn from(x: Geom) -> Robj {
