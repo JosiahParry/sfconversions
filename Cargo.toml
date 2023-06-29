@@ -13,4 +13,5 @@ extendr-api = '*'
 geo-types = ">=0.6.0"
 
 [lib]
+crate-type = ["staticlib", "lib"]
 doctest = false
