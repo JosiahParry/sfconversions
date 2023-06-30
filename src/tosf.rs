@@ -8,8 +8,8 @@
 use extendr_api::prelude::*;
 use extendr_api::Robj;
 use geo_types::*;
-
 use crate::Geom;
+
 pub fn to_sfg(x: Geom) -> Robj {
     let x = x.geom;
     match x {
@@ -87,14 +87,16 @@ fn from_coord(x: Coord) -> [f64; 2] {
     [x.x, x.y]
 }
 
-fn from_point(x: Point) -> Robj {
+
+
+pub fn from_point(x: Point) -> Robj {
     let x = from_coord(x.0);
     Robj::try_from(x).unwrap()
         .set_class(["XY", "POINT", "sfg"])
         .unwrap()
 }
 
-fn from_multipoint(x: MultiPoint) -> Robj {
+pub fn from_multipoint(x: MultiPoint) -> Robj {
     let x = x
         .into_iter()
         .map(|p| from_coord(p.into()))
@@ -106,7 +108,7 @@ fn from_multipoint(x: MultiPoint) -> Robj {
         .unwrap()
 }
 
-fn from_linestring(x: LineString) -> Robj {
+pub fn from_linestring(x: LineString) -> Robj {
     let x = x.into_iter().map(from_coord).collect::<Vec<[f64; 2]>>();
 
     let res = RMatrix::new_matrix(x.len(), 2, |r, c| x[r][c]);
@@ -115,7 +117,7 @@ fn from_linestring(x: LineString) -> Robj {
         .unwrap()
 }
 
-fn from_multilinestring(x: MultiLineString) -> Robj {
+pub fn from_multilinestring(x: MultiLineString) -> Robj {
     x.0.into_iter()
         .map(from_linestring)
         .collect::<List>()
@@ -124,7 +126,7 @@ fn from_multilinestring(x: MultiLineString) -> Robj {
         .unwrap()
 }
 
-fn from_polygon(x: Polygon) -> Robj {
+pub fn from_polygon(x: Polygon) -> Robj {
     let exterior = x.exterior().to_owned();
     let interriors = x.interiors().to_owned();
 
@@ -142,7 +144,7 @@ fn from_polygon(x: Polygon) -> Robj {
         .unwrap()
 }
 
-fn from_multipolygon(x: MultiPolygon) -> Robj {
+pub fn from_multipolygon(x: MultiPolygon) -> Robj {
     let res = x.into_iter().map(from_polygon).collect::<List>();
 
     Robj::from(res)

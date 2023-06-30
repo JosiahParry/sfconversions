@@ -2,6 +2,7 @@ use extendr_api::prelude::*;
 
 pub mod fromsf;
 pub mod tosf;
+pub mod constructors;
 
 use geo_types::{
     Geometry, Line, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon, Rect,
@@ -177,6 +178,6 @@ pub fn geoms_ref_from_list(x: List) -> Vec<Option<&'static Geom>> {
 extendr_module! {
     mod sfconversions;
     impl Geom;
-    //use fromsf;
+    use fromsf;
     //use tosf;
 }
