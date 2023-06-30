@@ -67,27 +67,10 @@ pub fn determine_sfc_class(x: &Vec<Option<Geom>>) -> String {
 }
 
 
-// /// Takes a list of pointers to `Geom` structs, and constructs an
-// #[extendr]
-// pub fn geoms_to_sfg(x: List) -> List {
-//     x.into_iter()
-//         .map(|(_, robj)| {
-//             if robj.is_null() {
-//                 Robj::from(NULL)
-//             } else {
-//                 to_sfg(Geom::from(robj))
-//             }
-//         })
-//         .collect::<List>()
-// }
-
-
 
 fn from_coord(x: Coord) -> [f64; 2] {
     [x.x, x.y]
 }
-
-
 
 pub fn from_point(x: Point) -> Robj {
     let x = from_coord(x.0);

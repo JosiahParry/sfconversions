@@ -23,7 +23,7 @@
 use extendr_api::prelude::*;
 
 
-use crate::Geom;
+use crate::{Geom, vctrs::{determine_geoms_class, as_rsgeo_vctr}};
 use geo_types::Geometry;
 
 use std::{
@@ -37,20 +37,17 @@ extendr_module! {
     fn sfc_to_rsgeo;
 }
 
-
 // this function is for rsgeo
 #[extendr]
-pub fn sfc_to_rsgeo(x: List) -> Vec<Robj> {
-    x
+pub fn sfc_to_rsgeo(x: List) -> Robj {
+    let rsgeo = x
         .into_iter()
-        .map(|(_, robj)| {
-            let geo = sfg_to_geom(robj);
-            match geo {
-                Ok(g) => g.into(),
-                Err(_) => Robj::from(NULL)
-            }
-        }).collect::<Vec<Robj>>()
+        .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
+    let cls = determine_geoms_class(&rsgeo);
+    as_rsgeo_vctr(rsgeo, cls)
 }
+
+
 
 // These functions are for people who do not want to use rsgeo
 

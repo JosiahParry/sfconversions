@@ -3,6 +3,7 @@ use extendr_api::prelude::*;
 pub mod fromsf;
 pub mod tosf;
 pub mod constructors;
+pub mod vctrs;
 
 use geo_types::{
     Geometry, Line, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon, Rect,

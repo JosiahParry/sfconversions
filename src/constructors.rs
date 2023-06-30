@@ -140,7 +140,7 @@ pub fn matrix_to_points(x: RMatrix<f64>) -> Vec<Point> {
 
 // utility function to take a list and convert to a Polygon
 // will be used to collect into `Vec<Polygon>` and thus into `MultiPolygon`
-pub fn polygon_inner(x: List) -> Polygon {
+fn polygon_inner(x: List) -> Polygon {
     let n = x.len();
     let mut linestrings: Vec<LineString> = Vec::with_capacity(n);
 
