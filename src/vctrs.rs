@@ -46,3 +46,22 @@ pub fn determine_geoms_class(x: &List) -> [String; 3] {
 
     geom_class(class)
 }
+
+
+/// Check if an object is an rsgeo vector 
+pub fn is_rsgeo(x: &List) -> Rbool {
+    if x.is_null() {
+        return Rbool::na()
+    } else {
+        let cls = x.class().unwrap().next().unwrap();
+        return cls.starts_with("rs_").into()
+    }
+}
+
+/// Panics if x is not an rsgeo vector
+pub fn verify_rsgeo(x: &List) {
+    let cls = x.class().unwrap().next().unwrap();
+    if !cls.starts_with("rs_") {
+        panic!("`x` must be a Rust geometry type")
+    }
+}
