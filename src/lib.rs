@@ -34,7 +34,7 @@ pub struct Geom {
 }
 
 
-trait IntoGeom {
+pub trait IntoGeom {
     fn into_geom(self) -> Geom;
 }
 
