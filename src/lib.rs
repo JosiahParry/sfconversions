@@ -9,6 +9,7 @@ use geo_types::{
     Geometry, Line, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon, Rect,
 };
 
+
 // #[extendr]
 // fn round_trip(x: List) -> Robj {
 //     let y = sfc_to_geoms(x);
@@ -31,6 +32,21 @@ pub struct Geom {
     /// a single field containing a geo_types [Geometry](https://docs.rs/geo-types/latest/geo_types/geometry/enum.Geometry.html) enum
     pub geom: Geometry,
 }
+
+
+trait IntoGeom {
+    fn into_geom(self) -> Geom;
+}
+
+impl<T> IntoGeom for T
+where
+    Geom: From<T>,
+{
+    fn into_geom(self) -> Geom {
+        Geom::from(self)
+    }
+}
+
 
 #[extendr]
 impl Geom {
