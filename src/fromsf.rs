@@ -31,10 +31,25 @@ use std::{
 };
 
 // this function is for rsgeo
+// pub fn sfc_to_rsgeo(x: List) -> Robj {
+//     let rsgeo = x
+//         .into_iter()
+//         .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
+//     let cls = determine_geoms_class(&rsgeo);
+//     as_rsgeo_vctr(rsgeo, cls)
+// }
+
 pub fn sfc_to_rsgeo(x: List) -> Robj {
-    let rsgeo = x
-        .into_iter()
-        .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
+    let mut rsgeo = List::new(x.len());
+
+    for (i, (_, obj)) in x.iter().enumerate() {
+        rsgeo.set_elt(i, sfg_to_rsgeo(obj)).unwrap();
+    }
+
+    // see https://github.com/extendr/extendr/pull/540
+    // let rsgeo = x
+    //     .into_iter()
+    //     .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
     let cls = determine_geoms_class(&rsgeo);
     as_rsgeo_vctr(rsgeo, cls)
 }
