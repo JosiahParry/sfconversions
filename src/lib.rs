@@ -9,20 +9,25 @@ use geo_types::{
     Geometry, Line, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon, Rect,
 };
 
+use geo::BoundingRect;
 
-// #[extendr]
-// fn round_trip(x: List) -> Robj {
-//     let y = sfc_to_geoms(x);
+extendr_module! {
+    mod sfconversions;
+    impl Geom;
+}
 
-//     y.iter()
-//         .filter_map(|xi| {
-//             match xi {
-//                 Some(xi) => xi.geom.
-//             }
-//         })
-//     geoms_to_sfc(y)
 
-// }
+/// Implement RTreeObject for Geom
+impl rstar::RTreeObject for Geom {
+    type Envelope = rstar::AABB<[f64; 2]>;
+    fn envelope(&self) -> Self::Envelope {
+        let bbox = self.geom.bounding_rect().unwrap();
+        let ll = bbox.min(); //lower left x coord
+        let ur = bbox.max(); // upper right y
+        rstar::AABB::from_corners(ll.into(), ur.into())
+    }
+}
+
 
 /// The `Geom` struct is the backbone of sfconversions. It provides
 /// an itermediary between extendr and geo / geo_types as required
@@ -34,10 +39,13 @@ pub struct Geom {
 }
 
 
+/// Trait to convert objects to Geom structs
 pub trait IntoGeom {
     fn into_geom(self) -> Geom;
 }
 
+
+/// Implement IntoGeom for any structs that have `From<T> for Geom`
 impl<T> IntoGeom for T
 where
     Geom: From<T>,

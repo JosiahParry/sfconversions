@@ -10,8 +10,13 @@ categories = ["science::geo"]
 
 [dependencies]
 extendr-api = '>=0.4.0'
+geo = ">=0.25.0"
 geo-types = ">=0.6.0"
+rstar = {versions = ">=0.11.0" }
 
 [lib]
 crate-type = ["staticlib", "lib"]
 doctest = false
+
+[features]
+# rstar = ["dep:rstar"]
