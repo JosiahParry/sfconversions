@@ -10,6 +10,7 @@ use geo_types::{
 };
 
 use geo::BoundingRect;
+use rstar::primitives::CachedEnvelope;
 
 extendr_module! {
     mod sfconversions;
@@ -29,6 +30,7 @@ impl rstar::RTreeObject for Geom {
 }
 
 
+
 /// The `Geom` struct is the backbone of sfconversions. It provides
 /// an itermediary between extendr and geo / geo_types as required
 /// by the orphan rule.
@@ -42,6 +44,7 @@ pub struct Geom {
 /// Trait to convert objects to Geom structs
 pub trait IntoGeom {
     fn into_geom(self) -> Geom;
+    fn cached_envelope(self) -> CachedEnvelope<Geom>;
 }
 
 
@@ -52,6 +55,10 @@ where
 {
     fn into_geom(self) -> Geom {
         Geom::from(self)
+    }
+
+    fn cached_envelope(self) -> CachedEnvelope<Geom> {
+        CachedEnvelope::new(self.into())
     }
 }
 
@@ -66,6 +73,7 @@ impl Geom {
             .to_string()
     }
 }
+
 
 // FROM geo-types to Geom
 /// Convert a Geometry enum to a Geom struct

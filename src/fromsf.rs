@@ -30,14 +30,6 @@ use std::{
     result::Result
 };
 
-// this function is for rsgeo
-// pub fn sfc_to_rsgeo(x: List) -> Robj {
-//     let rsgeo = x
-//         .into_iter()
-//         .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
-//     let cls = determine_geoms_class(&rsgeo);
-//     as_rsgeo_vctr(rsgeo, cls)
-// }
 
 pub fn sfc_to_rsgeo(x: List) -> Robj {
     let mut rsgeo = List::new(x.len());
