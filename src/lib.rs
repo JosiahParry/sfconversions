@@ -65,7 +65,7 @@ where
 
 #[extendr]
 impl Geom {
-    fn print(&self) -> String {
+    pub fn print(&self) -> String {
         let fstr = format!("{:?}", self.geom);
         fstr.splitn(2, '(')
             .nth(1)
