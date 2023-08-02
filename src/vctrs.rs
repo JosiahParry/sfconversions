@@ -14,23 +14,23 @@ use extendr_api::List;
 
 
 /// Converts a List of Geom pointers to a {vctrs} vctr
-pub fn as_rsgeo_vctr(x: List, class: [String; 3]) -> Robj {
+pub fn as_rsgeo_vctr(x: List, class: [String; 4]) -> Robj {
     x
         .set_class(class)
         .unwrap()
 }
 
 /// Create a `String` array of the vctrs class
-pub fn geom_class(cls: &str) -> [String; 3] {
+pub fn geom_class(cls: &str) -> [String; 4] {
     let cls = cls.to_uppercase();
     let geom_class = "rs_".to_owned() + cls.as_str();
 
-    [geom_class, String::from("vctrs_vctr"), String::from("list")]
+    [geom_class, String::from("rsgeo"), String::from("vctrs_vctr"), String::from("list")]
 }
 
 
 /// From a List, determine the {vctrs} class of the pointer list
-pub fn determine_geoms_class(x: &List) -> [String; 3] {
+pub fn determine_geoms_class(x: &List) -> [String; 4] {
 
     let class = x[0].class().unwrap().nth(0).unwrap();
 
