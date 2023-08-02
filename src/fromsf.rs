@@ -22,7 +22,7 @@
 
 use extendr_api::prelude::*;
 
-use crate::{Geom, vctrs::{determine_geoms_class, as_rsgeo_vctr}};
+use crate::{Geom, vctrs::{determine_geoms_class}};
 use geo_types::Geometry;
 
 use std::{
@@ -43,7 +43,9 @@ pub fn sfc_to_rsgeo(x: List) -> Robj {
     //     .into_iter()
     //     .map(|(_, robj)| sfg_to_rsgeo(robj)).collect::<List>();   
     let cls = determine_geoms_class(&rsgeo);
-    as_rsgeo_vctr(rsgeo, cls)
+    rsgeo
+        .set_class(cls)
+        .unwrap()
 }
 
 

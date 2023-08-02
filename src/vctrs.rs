@@ -14,9 +14,9 @@ use extendr_api::List;
 
 
 /// Converts a List of Geom pointers to a {vctrs} vctr
-pub fn as_rsgeo_vctr(x: List, class: [String; 4]) -> Robj {
+pub fn as_rsgeo_vctr(x: List, class: &str) -> Robj {
     x
-        .set_class(class)
+        .set_class(geom_class(class))
         .unwrap()
 }
 
