@@ -143,7 +143,6 @@ use crate::constructors::*;
 
 #[extendr]
 pub fn sfg_to_rsgeo(x: Robj) -> Robj {
-
     let cls2 = x.class().unwrap().map(|x| x).collect::<Vec<&str>>();
     let cls = cls2[1];
 

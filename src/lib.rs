@@ -148,6 +148,7 @@ impl From<Geom> for Polygon {
     }
 }
 
+
 impl From<Geom> for LineString {
     fn from(geom: Geom) -> Self {
         let x = geom.geom;

@@ -7,6 +7,8 @@ description = "Support conversion from R's sf package types to geo_types geometr
 repository = "https://github.com/josiahparry/sfconversions"
 keywords = ["geospatial", "rstats"]
 categories = ["science::geo"]
+authors = ["Josiah Parry"]
+
 
 [dependencies]
 extendr-api = '>=0.4.0'

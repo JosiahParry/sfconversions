@@ -7,7 +7,7 @@ use extendr_api::prelude::*;
 use geo_types::{coord, Coord, LineString, Point, Polygon, point, MultiLineString, MultiPoint, MultiPolygon};
 use crate::Geom;
 
-
+// TODO REMOVE SCALAR CLASSES 
 /// Create a single `point` from an x and y value.
 pub fn geom_point(x: f64, y: f64) -> Robj {
     Geom::from(Point::new(x, y))
@@ -56,6 +56,7 @@ pub fn geom_multilinestring(x: List) -> Robj {
 /// Create a single `polygon` from a list of 2 dimensional matrices.
 pub fn geom_polygon(x: List) -> Robj {
     let n = x.len();
+
     let mut linestrings: Vec<LineString> = Vec::with_capacity(n);
 
     let exterior = matrix_to_coords(x[0].as_matrix().unwrap());
@@ -69,8 +70,9 @@ pub fn geom_polygon(x: List) -> Robj {
             linestrings.push(line);
         }
     }
-
+    
     let polygon = Polygon::new(exterior, linestrings);
+
     Geom::from(polygon)
         .into_robj()
         .set_class(["polygon", "Geom"])
