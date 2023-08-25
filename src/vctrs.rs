@@ -65,3 +65,20 @@ pub fn verify_rsgeo(x: &List) {
         panic!("`x` must be a Rust geometry type")
     }
 }
+
+/// Returns the rsgeo vector type such as "point", "linestring", etc 
+pub fn rsgeo_type(x: &List) -> String {
+    if !x.inherits("rsgeo") {
+        panic!("object is not an `rsgeo` vector")
+    }
+
+    let cls = x.class().unwrap().next().unwrap();
+
+    if !cls.starts_with("rs_") {
+        panic!("Object is not an `rsgeo` vector with `rs_` prefix")
+    }
+
+    let mut cls = cls.to_string();
+    cls.split_off(3).to_lowercase()
+}
+

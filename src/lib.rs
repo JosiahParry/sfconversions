@@ -139,6 +139,15 @@ impl From<Line> for Geom {
     }
 }
 
+
+// impl From<Geom> for MultiPolygon {
+//     fn from(geom: Geom) -> Self {
+//         let x = geom.geom;
+//         let x: MultiPolygon = x.try_into().unwrap();
+//         x
+//     }
+// }
+
 // TO geo-types from Geom
 impl From<Geom> for Polygon {
     fn from(geom: Geom) -> Self {
@@ -147,7 +156,6 @@ impl From<Geom> for Polygon {
         x
     }
 }
-
 
 impl From<Geom> for LineString {
     fn from(geom: Geom) -> Self {
@@ -206,4 +214,16 @@ pub fn geoms_ref_from_list(x: List) -> Vec<Option<&'static Geom>> {
     })
     .collect::<Vec<Option<&Geom>>>()
 
+}
+
+
+pub fn geometry_from_list(x: List) -> Vec<Option<Geometry>> {
+    x
+        .into_iter()
+        .map(|(_, xi)| {
+            match <&Geom>::from_robj(&xi) {
+                Ok(g) => Some(g.geom.clone()),
+                Err(_) => None
+            }
+        }).collect::<Vec<Option<Geometry>>>()
 }
