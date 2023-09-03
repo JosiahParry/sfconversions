@@ -29,6 +29,19 @@ impl rstar::RTreeObject for Geom {
     }
 }
 
+use geo::euclidean_distance::EuclideanDistance;
+
+impl rstar::PointDistance for Geom {
+    fn distance_2(
+            &self,
+            point: &<Self::Envelope as rstar::Envelope>::Point,
+        ) -> <<Self::Envelope as rstar::Envelope>::Point as rstar::Point>::Scalar {
+            let pnt = geo_types::coord!{x: point[0], y: point[1]};
+            let pnt = geo_types::point!(pnt);
+            let d = &self.geom.euclidean_distance(&pnt);
+            d.powi(2)
+    }
+}
 
 
 /// The `Geom` struct is the backbone of sfconversions. It provides
