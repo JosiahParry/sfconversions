@@ -13,7 +13,7 @@ authors = ["Josiah Parry"]
 [dependencies]
 extendr-api = '>=0.4.0'
 geo = ">=0.26.0"
-geo-types = ">=0.6.0"
+geo-types = {version = ">=0.6.0", features = ["use-rstar_0_11"] }
 rstar = {version = ">=0.11.0" }
 
 [lib]
