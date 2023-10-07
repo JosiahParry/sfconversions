@@ -110,7 +110,7 @@ pub fn sfg_to_geom(x: Robj) -> Result<Geom, Box<dyn Error>> {
     match cls {
         "POINT" => {
             let x = Doubles::try_from(x).unwrap();
-            Ok(geom_point(x[0].0, x[1].0).into())
+            Ok(geom_point(x[0].inner(), x[1].inner()).into())
         }
         "MULTIPOINT" => {
             let x = RMatrix::from_robj(&x).unwrap();
@@ -149,7 +149,7 @@ pub fn sfg_to_rsgeo(x: Robj) -> Robj {
     match cls {
         "POINT" => {
             let x = Doubles::try_from(x).unwrap();
-            geom_point(x[0].0, x[1].0)
+            geom_point(x[0].inner(), x[1].inner())
         }
         "MULTIPOINT" => {
             let x = RMatrix::from_robj(&x).unwrap();
