@@ -1,56 +1,49 @@
 //! Construct geo-types geometry from R objects
-//! 
+//!
 //! These function are used to convert R objects into geo-types geometry.
-//! These functions mimic the structure of sfg objects from the sf package. 
+//! These functions mimic the structure of sfg objects from the sf package.
 //! Additional quality of life constructors are made available in {rsgeo}.
-use extendr_api::prelude::*;
-use geo_types::{coord, Coord, LineString, Point, Polygon, point, MultiLineString, MultiPoint, MultiPolygon};
 use crate::Geom;
+use extendr_api::prelude::*;
+use geo_types::{
+    coord, point, Coord, LineString, MultiLineString, MultiPoint, MultiPolygon, Point, Polygon,
+};
 
-// TODO REMOVE SCALAR CLASSES 
+// TODO REMOVE SCALAR CLASSES
 /// Create a single `point` from an x and y value.
 pub fn geom_point(x: f64, y: f64) -> Robj {
-    Geom::from(Point::new(x, y))
-        .into_robj()
-        .set_class(["point", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(Point::new(x, y)).into_robj();
+    robj.set_class(["point", "Geom"]).unwrap();
+    robj
 }
 
 /// Create a single `multipoint` from a 2 dimensional matrix.
 pub fn geom_multipoint(x: RArray<f64, [usize; 2]>) -> Robj {
     let mpnt = MultiPoint::new(matrix_to_points(x));
-    Geom::from(mpnt)
-        .into_robj()
-        .set_class(["multipoint", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(mpnt).into_robj();
+    robj.set_class(["multipoint", "Geom"]).unwrap();
+    robj
 }
 
 /// Create a single `linestring` from a 2 dimensional matrix.
 pub fn geom_linestring(x: RArray<f64, [usize; 2]>) -> Robj {
     let coords = matrix_to_coords(x);
     let lns = LineString::new(coords);
-    Geom::from(lns)
-        .into_robj()
-        .set_class(["linestring", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(lns).into_robj();
+    robj.set_class(["linestring", "Geom"]).unwrap();
+    robj
 }
-
 
 /// Create a single `multilinestring` from a list of 2 dimensional matrices.
 pub fn geom_multilinestring(x: List) -> Robj {
     let vec_lns = x
         .into_iter()
-        .map(|(_, x)| LineString::new(
-            matrix_to_coords(
-                RMatrix::try_from(x).unwrap()
-            ))
-        )
+        .map(|(_, x)| LineString::new(matrix_to_coords(RMatrix::try_from(x).unwrap())))
         .collect::<Vec<LineString>>();
 
-    Geom::from(MultiLineString::new(vec_lns))
-        .into_robj()
-        .set_class(["multilinestring", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(MultiLineString::new(vec_lns)).into_robj();
+    robj.set_class(["multilinestring", "Geom"]).unwrap();
+    robj
 }
 
 /// Create a single `polygon` from a list of 2 dimensional matrices.
@@ -70,13 +63,12 @@ pub fn geom_polygon(x: List) -> Robj {
             linestrings.push(line);
         }
     }
-    
+
     let polygon = Polygon::new(exterior, linestrings);
 
-    Geom::from(polygon)
-        .into_robj()
-        .set_class(["polygon", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(polygon).into_robj();
+    robj.set_class(["polygon", "Geom"]).unwrap();
+    robj
 }
 
 /// Create a single `multipolygon` from a list of lists of 2 dimensional matrices.
@@ -87,10 +79,9 @@ pub fn geom_multipolygon(x: List) -> Robj {
             .collect::<Vec<Polygon>>(),
     );
 
-    Geom::from(res)
-        .into_robj()
-        .set_class(["multipolygon", "Geom"])
-        .unwrap()
+    let mut robj = Geom::from(res).into_robj();
+    robj.set_class(["multipolygon", "Geom"]).unwrap();
+    robj
 }
 
 // First, I need to take a matrix and convert into coordinates
@@ -112,7 +103,6 @@ pub fn matrix_to_coords(x: RMatrix<f64>) -> Vec<Coord> {
     }
     coords
 }
-
 
 /// Convert an `RMatrix<f64>` into a vector of `Points`. Is
 /// used internally to create `MultiPoint`s.
@@ -154,5 +144,3 @@ fn polygon_inner(x: List) -> Polygon {
 
     Polygon::new(exterior, linestrings)
 }
-
-
