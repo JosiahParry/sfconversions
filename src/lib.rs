@@ -1,8 +1,10 @@
 use extendr_api::prelude::*;
 
-pub mod fromsf;
-pub mod tosf;
 pub mod constructors;
+pub mod esri;
+pub mod fromsf;
+pub mod sfg;
+pub mod tosf;
 pub mod vctrs;
 
 use geo_types::{
@@ -16,7 +18,6 @@ extendr_module! {
     mod sfconversions;
     impl Geom;
 }
-
 
 /// Implement RTreeObject for Geom
 impl rstar::RTreeObject for Geom {
@@ -41,7 +42,6 @@ impl rstar::RTreeObject for Geom {
 //     }
 // }
 
-
 /// The `Geom` struct is the backbone of sfconversions. It provides
 /// an itermediary between extendr and geo / geo_types as required
 /// by the orphan rule.
@@ -51,13 +51,11 @@ pub struct Geom {
     pub geom: Geometry,
 }
 
-
 /// Trait to convert objects to Geom structs
 pub trait IntoGeom {
     fn into_geom(self) -> Geom;
     fn cached_envelope(self) -> CachedEnvelope<Geom>;
 }
-
 
 /// Implement IntoGeom for any structs that have `From<T> for Geom`
 impl<T> IntoGeom for T
@@ -73,18 +71,13 @@ where
     }
 }
 
-
 #[extendr]
 impl Geom {
     pub fn print(&self) -> String {
         let fstr = format!("{:?}", self.geom);
-        fstr.splitn(2, '(')
-            .nth(1)
-            .unwrap_or("")
-            .to_string()
+        fstr.splitn(2, '(').nth(1).unwrap_or("").to_string()
     }
 }
-
 
 // FROM geo-types to Geom
 /// Convert a Geometry enum to a Geom struct
@@ -150,7 +143,6 @@ impl From<Line> for Geom {
     }
 }
 
-
 // impl From<Geom> for MultiPolygon {
 //     fn from(geom: Geom) -> Self {
 //         let x = geom.geom;
@@ -188,9 +180,7 @@ impl From<Geom> for Point {
 /// for structs. This impl clones the struct to create an owned struct.
 impl From<Robj> for Geom {
     fn from(robj: Robj) -> Self {
-        <&Geom>::from_robj(&robj)
-            .unwrap()
-            .clone()
+        <&Geom>::try_from(&robj).unwrap().clone()
     }
 }
 
@@ -199,10 +189,8 @@ impl From<Robj> for Geom {
 // independently. This implementation clones the pointers
 // Missing geometries are recorded as a NULL (extendr_api::NULL)
 pub fn geoms_from_list(x: List) -> Vec<Option<Geom>> {
-    x
-        .into_iter()
+    x.into_iter()
         .map(|(_, robj)| {
-
             if robj.is_null() {
                 None
             } else {
@@ -213,28 +201,22 @@ pub fn geoms_from_list(x: List) -> Vec<Option<Geom>> {
 }
 
 pub fn geoms_ref_from_list(x: List) -> Vec<Option<&'static Geom>> {
-    x
-    .into_iter()
-    .map(|(_, robj)| {
-
-        if robj.is_null() {
-            None
-        } else {
-            Some(<&Geom>::from_robj(&robj).unwrap())
-        }
-    })
-    .collect::<Vec<Option<&Geom>>>()
-
+    x.into_iter()
+        .map(|(_, robj)| {
+            if robj.is_null() {
+                None
+            } else {
+                Some(<&Geom>::try_from(&robj).unwrap())
+            }
+        })
+        .collect::<Vec<Option<&Geom>>>()
 }
 
-
 pub fn geometry_from_list(x: List) -> Vec<Option<Geometry>> {
-    x
-        .into_iter()
-        .map(|(_, xi)| {
-            match <&Geom>::from_robj(&xi) {
-                Ok(g) => Some(g.geom.clone()),
-                Err(_) => None
-            }
-        }).collect::<Vec<Option<Geometry>>>()
+    x.into_iter()
+        .map(|(_, xi)| match <&Geom>::try_from(&xi) {
+            Ok(g) => Some(g.geom.clone()),
+            Err(_) => None,
+        })
+        .collect::<Vec<Option<Geometry>>>()
 }

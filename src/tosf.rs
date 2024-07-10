@@ -1,17 +1,17 @@
 //! Conversion from geo-types to {sf} type objects
-//! 
+//!
 //! Provides simple conversion from `Geom` wrapper struct to an sfg class object.
 //! Additionally provides the ability to convert from `Vec<Option<Geom>>` to a list
 //! of sfg objects that can be easily converted into an sfc object by running `sf::st_sfc()`.
-//! 
+//!
+use crate::Geom;
 /// Takes a single Geom struct and creates the corresponding `sfg` object
 use extendr_api::prelude::*;
 use extendr_api::Robj;
 use geo_types::*;
-use crate::Geom;
 
-/// A general purpose function that matches on the `Geometry` enum to convert into the 
-/// appropriate sfg object type. If the Geom cannot be matched (e.g. Line or Triangle), 
+/// A general purpose function that matches on the `Geometry` enum to convert into the
+/// appropriate sfg object type. If the Geom cannot be matched (e.g. Line or Triangle),
 /// it will return a `NULL` Robj.
 pub fn to_sfg(x: Geom) -> Robj {
     let x = x.geom;
@@ -26,29 +26,24 @@ pub fn to_sfg(x: Geom) -> Robj {
     }
 }
 
-
 /// Takes a `Vec<Option<Geom>>` such as the result of `sfc_to_geometry()`
 /// and creates a list of sfg objects. This can be easily turned into an `sfc`
-/// by passing the results to `sf::st_sfc()`. This cannot be converted into an 
-/// `sfc` object without first calculating the bounding box which would require 
+/// by passing the results to `sf::st_sfc()`. This cannot be converted into an
+/// `sfc` object without first calculating the bounding box which would require
 /// importing geo.
 pub fn geoms_to_sfc(x: Vec<Option<Geom>>) -> List {
-
     //let cls = determine_sfc_class(&x).to_ascii_uppercase();
     // let cls_array = [format!("sfc_{cls}"), String::from("sfc")];
 
-    x
-        .into_iter()
-        .map(|geom| {
-            match geom {
-                Some(geo) => to_sfg(geo),
-                None => Robj::from(NULL)
-            }
-        }).collect::<List>()
-
+    x.into_iter()
+        .map(|geom| match geom {
+            Some(geo) => to_sfg(geo),
+            None => Robj::from(NULL),
+        })
+        .collect::<List>()
 }
 
-/// Utility function to identify the class of an sfc object . 
+/// Utility function to identify the class of an sfc object .
 pub fn determine_sfc_class(x: &Vec<Option<Geom>>) -> String {
     let mut result = String::new();
     for geom in x {
@@ -58,18 +53,16 @@ pub fn determine_sfc_class(x: &Vec<Option<Geom>>) -> String {
                 let cls = fstr.splitn(2, '(').next().unwrap().to_string();
                 if result.is_empty() {
                     result = cls;
-                } else if result != cls  {
+                } else if result != cls {
                     result = "GEOMETRYCOLLECTION".to_string();
                     break;
                 }
-            },
-            None => continue
+            }
+            None => continue,
         }
     }
     result
 }
-
-
 
 fn from_coord(x: Coord) -> [f64; 2] {
     [x.x, x.y]
@@ -78,9 +71,11 @@ fn from_coord(x: Coord) -> [f64; 2] {
 /// Convert a `Point` to a sfg
 pub fn from_point(x: Point) -> Robj {
     let x = from_coord(x.0);
-    Robj::try_from(x).unwrap()
+    Robj::try_from(x)
+        .unwrap()
         .set_class(["XY", "POINT", "sfg"])
         .unwrap()
+        .clone()
 }
 
 /// Convert a `MultiPoint` to an sfg
@@ -94,8 +89,8 @@ pub fn from_multipoint(x: MultiPoint) -> Robj {
     Robj::from(res)
         .set_class(["XY", "MULTIPOINT", "sfg"])
         .unwrap()
+        .clone()
 }
-
 
 /// Convert a `LineString` to an sfg
 pub fn from_linestring(x: LineString) -> Robj {
@@ -105,6 +100,7 @@ pub fn from_linestring(x: LineString) -> Robj {
     Robj::from(res)
         .set_class(["XY", "LINESTRING", "sfg"])
         .unwrap()
+        .clone()
 }
 
 /// Convert a `MultiLineString` to an sfg
@@ -115,6 +111,7 @@ pub fn from_multilinestring(x: MultiLineString) -> Robj {
         .into_robj()
         .set_class(["XY", "MULTILINESTRING", "sfg"])
         .unwrap()
+        .clone()
 }
 
 /// Convert a `Polygon` to an sfg
@@ -134,8 +131,8 @@ pub fn from_polygon(x: Polygon) -> Robj {
     Robj::from(List::from_values(res))
         .set_class(["XY", "POLYGON", "sfg"])
         .unwrap()
+        .clone()
 }
-
 
 /// Convert a `MultiPolygon` to an sfg
 pub fn from_multipolygon(x: MultiPolygon) -> Robj {
@@ -144,5 +141,5 @@ pub fn from_multipolygon(x: MultiPolygon) -> Robj {
     Robj::from(res)
         .set_class(["XY", "MULTIPOLYGON", "sfg"])
         .unwrap()
+        .clone()
 }
-

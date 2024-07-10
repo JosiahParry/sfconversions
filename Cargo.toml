@@ -1,6 +1,6 @@
 [package]
 name = "sfconversions"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 license = "MIT"
 description = "Support conversion from R's sf package types to geo_types geometry primitives using extendr"
@@ -11,10 +11,11 @@ authors = ["Josiah Parry"]
 
 
 [dependencies]
-extendr-api = '>=0.4.0'
+extendr-api = '>=0.7.0'
 geo = ">=0.26.0"
-geo-types = {version = ">=0.6.0", features = ["use-rstar_0_11"] }
-rstar = {version = ">=0.11.0" }
+geo-types = { version = ">=0.6.0", features = ["use-rstar_0_11"] }
+rstar = { version = ">=0.11.0" }
+serde_esri = { git = "https://github.com/JosiahParry/serde_esri" }
 
 [lib]
 crate-type = ["staticlib", "lib"]
