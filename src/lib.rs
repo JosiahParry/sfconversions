@@ -46,6 +46,7 @@ impl rstar::RTreeObject for Geom {
 /// an itermediary between extendr and geo / geo_types as required
 /// by the orphan rule.
 #[derive(Debug, Clone)]
+#[extendr]
 pub struct Geom {
     /// a single field containing a geo_types [Geometry](https://docs.rs/geo-types/latest/geo_types/geometry/enum.Geometry.html) enum
     pub geom: Geometry,
