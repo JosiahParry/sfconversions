@@ -11,12 +11,13 @@ Due to the [orphan rule](https://github.com/Ixrec/rust-orphan-rules) conversion 
 Basic conversion from sfg objects is done with `sfg_to_geom()`.
 
 ```rust
-use sfconversions::{sfg_to_geom, geom::Geom};
+use sfconversions::{fromsf::sfg_to_geom, Geom};
 use extendr_api::prelude::*;
 
 #[extendr]
 fn extract_sfg(x: Robj) -> String {
-  sfg_to_geom(x).unwrap().print()
+  let geom: Geom = sfg_to_geom(x).unwrap();
+  geom.print()
 }
 ```
 
