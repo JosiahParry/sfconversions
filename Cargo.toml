@@ -1,17 +1,17 @@
 [package]
 name = "sfconversions"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 license = "MIT"
 description = "Support conversion from R's sf package types to geo_types geometry primitives using extendr"
 repository = "https://github.com/josiahparry/sfconversions"
 keywords = ["geospatial", "rstats"]
 categories = ["science::geo"]
-authors = ["Josiah Parry"]
+authors = ["Josiah Parry <josiah@ricochet.rs>", "Kenneth Vernon <kenneth.b.vernon@gmail.com>" ]
 
 
 [dependencies]
-extendr-api = '0.8.0'
+extendr-api = ">=0.8"
 geo = ">=0.26.0"
 geo-types = { version = ">=0.6.0", features = ["use-rstar_0_11"] }
 rstar = { version = ">=0.11.0" }
