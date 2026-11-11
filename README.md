@@ -1,29 +1,33 @@
 ## sfconversions
 
-A minimal Rust library to convert geometry objects from the R package [{sf}](https://r-spatial.github.io/sf/) into [geo-types](https://docs.rs/geo-types/latest/geo_types/) geometry primitives using [extendr](https://extendr.github.io/extendr/extendr_api/).
+Strongly typed Rust objects to interface with the {sf} R package (todo hyperlink).
 
-Provides simple conversions between sfg, sfc objects from sf, and geometry primitives from geo_types that can be used with other georust libraries powered by [extendr](https://extendr.github.io/extendr/extendr_api/).
+- Implements `geo-traits` easy intergration with the geo-rust ecosystem
+- Implement conversions for `geo-types`
+- Rudimentary `sfc` support
 
-Due to the [orphan rule](https://github.com/Ixrec/rust-orphan-rules) conversion directly from extendr `Lists` to geo_types is not possible. For that reason a simple struct `Geom` is implemented with a single field `geom` which contains a geo_types `Geometry` enum. 
+This crate provides scalar types for each `Sfg` variant that can be used directly with `extendr` (todo hyperlink).
+Most importantly, this crate implements [`geo-traits`](TODO) which provides direct access to the `geo` library and generic geometry accessor functions.
 
-## Example
- 
-Basic conversion from sfg objects is done with `sfg_to_geom()`.
+## Example:
+
+For example, we can take an `sfc_POINT` object and calculate its centroid as a `POINT` sfg object.
 
 ```rust
-use sfconversions::{fromsf::sfg_to_geom, Geom};
 use extendr_api::prelude::*;
+use sfconversions::{sfc::SfcPoint, sfg::SfgPoint};
 
 #[extendr]
-fn extract_sfg(x: Robj) -> String {
-  let geom: Geom = sfg_to_geom(x).unwrap();
-  geom.print()
+fn calc_centroid(x: SfcPoint) -> SfgPoint {
+    let (sx, sy, n) = x.into_iter().fold((0.0, 0.0, 0usize), |(sx, sy, n), pnt| {
+        match pnt.ok().and_then(|p| p.coord().map(|c| c.x_y())) {
+            Some((x, y)) => (sx + x, sy + y, n + 1),
+            None => (sx, sy, n),
+        }
+    });
+
+    let p = point!(x: sx / n as f64, y :sy / n as f64);
+
+    SfgPoint::from(p)
 }
 ```
-
-The `Geom` struct is an extendr compatible struct with a single method which prints the string.
-
-sfconversions acts similarly to [sfheaders](https://github.com/dcooley/sfheaders) in that it returns the correct R objects with the appropriate classes without dependence upon sf. If sf is not available the conversions still will work but the print methods and other functions from sf will not be available. 
-
-It is important to note that sfconversions will _only_ create sfg objects and will not make `sfc` class object. This is because `sfc` objects require a bounding box attribute which can only be calculated using `geo` which is a larger dependency. To create an `sfc` object return a `List` of `sfg` objects and in R use
-`sf::st_sfc()` to complete the conversion. Use `geos_to_sfc()` to aid in this process.

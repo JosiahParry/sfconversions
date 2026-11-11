@@ -1,27 +1,26 @@
 [package]
 name = "sfconversions"
-version = "0.4.0"
-edition = "2021"
+version = "1.0.0"
+edition = "2024"
 license = "MIT"
-description = "Support conversion from R's sf package types to geo_types geometry primitives using extendr"
+description = "geo-traits implementations for the R package {sf} and their corresponding geometries."
 repository = "https://github.com/josiahparry/sfconversions"
 keywords = ["geospatial", "rstats"]
 categories = ["science::geo"]
-authors = ["Josiah Parry <josiah@ricochet.rs>", "Kenneth Vernon <kenneth.b.vernon@gmail.com>" ]
-
-
-[dependencies]
-extendr-api = ">=0.8"
-geo = "0.26.0"
-geo-types = { version = ">=0.6.0", features = ["use-rstar_0_11"] }
-rstar = { version = ">=0.11.0" }
-
-[lib]
-crate-type = ["staticlib", "lib"]
-doctest = false
+authors = ["Josiah Parry <josiah@ricochet.rs>", "Kenneth Vernon <kenneth.b.vernon@gmail.com>"]
 
 [features]
 # rstar = ["dep:rstar"]
 
-[patch.crates-io]
-geo = { git = "https://github.com/georust/geo" }
+[lib]
+crate-type = ["lib", "staticlib"]
+doctest = false
+
+[dependencies]
+extendr-api = ">=0.9"
+geo-traits = "0.3"
+geo-types = ">=0.7"
+rstar = { version = ">=0.11.0" }
+
+[dev-dependencies]
+extendr-engine = "0.9"
